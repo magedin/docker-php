@@ -19,6 +19,8 @@ RUN apt-get update && apt-get install -y \
   default-mysql-client \
   zip
 
+RUN docker-php-ext-configure gd --with-freetype --with-jpeg
+
 ## Install PHP Libs
 RUN docker-php-ext-install \
   bcmath \
@@ -41,8 +43,6 @@ RUN docker-php-ext-install \
   sysvshm \
   xsl \
   zip
-
-RUN docker-php-ext-configure gd --with-freetype --with-jpeg
 
 ## Install Tools
 RUN apt update && apt install -y \
