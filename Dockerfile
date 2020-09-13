@@ -1,4 +1,4 @@
-FROM php:7.3-fpm-buster
+FROM php:7.4-fpm-buster
 MAINTAINER MagedIn Technology <support@magedin.com>
 
 ## Install Dependencies
@@ -42,8 +42,7 @@ RUN docker-php-ext-install \
   xsl \
   zip
 
-RUN docker-php-ext-configure \
-  gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/
+RUN docker-php-ext-configure gd --with-freetype --with-jpeg
 
 ## Install Tools
 RUN apt update && apt install -y \
