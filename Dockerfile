@@ -1,4 +1,4 @@
-FROM php:7.2-fpm-buster
+FROM php:7.3-fpm-buster
 MAINTAINER MagedIn Technology <support@magedin.com>
 
 ## Install Dependencies
