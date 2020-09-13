@@ -83,6 +83,7 @@ RUN curl -sS https://getcomposer.org/installer | \
 COPY conf/www.conf /usr/local/etc/php-fpm.d/
 COPY conf/php.ini /usr/local/etc/php/
 COPY conf/php-fpm.conf /usr/local/etc/
+COPY conf/conf.d/*.ini /usr/local/etc/php/conf.d/
 
 RUN mkdir -p /etc/nginx/html /var/www/html /sock \
   && chown -R app:app /etc/nginx /var/www /usr/local/etc/php/conf.d /sock
