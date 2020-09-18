@@ -15,7 +15,6 @@ RUN apt-get update && apt-get install -y \
   libssh2-1-dev \
   libxslt1-dev \
   libzip-dev \
-  lsof \
   default-mysql-client \
   zip
 
@@ -49,7 +48,8 @@ RUN apt update && apt install -y \
   git \
   lsof \
   vim \
-  procps
+  procps \
+  watch
 
 ## Install Ioncube
 RUN cd /tmp \
@@ -80,9 +80,9 @@ RUN curl -sS https://getcomposer.org/installer | \
   php -- --version=1.10.9 --install-dir=/usr/local/bin --filename=composer
 
 ## Copy Configurations
-COPY conf/www.conf /usr/local/etc/php-fpm.d/
+#COPY conf/www.conf /usr/local/etc/php-fpm.d/
+#COPY conf/php-fpm.conf /usr/local/etc/
 COPY conf/php.ini /usr/local/etc/php/
-COPY conf/php-fpm.conf /usr/local/etc/
 COPY conf/conf.d/*.ini /usr/local/etc/php/conf.d/
 
 RUN mkdir -p /etc/nginx/html /var/www/html /sock \
@@ -90,6 +90,10 @@ RUN mkdir -p /etc/nginx/html /var/www/html /sock \
 
 ## Define User
 USER app:app
+
+VOLUME /var/www
+
+WORKDIR /var/www/html
 
 ## Expose Ports
 EXPOSE 9001
