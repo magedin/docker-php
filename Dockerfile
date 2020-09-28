@@ -1,4 +1,4 @@
-FROM php:7.4-fpm-buster
+FROM php:7.3-fpm-buster
 MAINTAINER MagedIn Technology <support@magedin.com>
 
 ARG GOSU_VERSION=1.11
@@ -62,7 +62,7 @@ RUN apt update && apt install -y \
 
 ## Configure the gd library
 RUN docker-php-ext-configure \
-  gd --with-freetype=/usr/include/ --with-jpeg=/usr/include/
+  gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/
 RUN docker-php-ext-configure \
   ldap --with-libdir=lib/x86_64-linux-gnu
 RUN docker-php-ext-configure \
