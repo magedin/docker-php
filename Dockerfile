@@ -15,6 +15,8 @@ ENV DEBUG false
 ENV UPDATE_UID_GID false
 ENV SET_DOCKER_HOST false
 
+ENV LS_OPTIONS "--color=auto"
+
 
 # BASE INSTALLATION ----------------------------------------------------------------------------------------------------
 
@@ -110,7 +112,7 @@ RUN pecl install -o -f \
   propro \
   raphf \
   redis \
-  xdebug-2.9.3 \
+  xdebug-2.9.8 \
   ssh2-1.2 \
   yaml
 
@@ -221,8 +223,12 @@ HEALTHCHECK --retries=3 CMD ["bash", "/usr/local/bin/fpm-healthcheck.sh"]
 COPY docker-entrypoint.sh /docker-entrypoint.sh
 RUN ["chmod", "+x", "/docker-entrypoint.sh"]
 
+RUN touch ${APP_HOME}/.bashrc \
+  && echo "alias ll=\"ls $LS_OPTIONS -lah\"" >> ${APP_HOME}/.bashrc \
+  && echo "alias l=\"ll\"" >> ${APP_HOME}/.bashrc
+
 RUN mkdir -p ${APP_ROOT} \
-  && chown -R ${APP_USER}:${APP_GROUP} /var/www /usr/local/etc/php/conf.d
+  && chown -R ${APP_USER}:${APP_GROUP} ${APP_HOME} /usr/local/etc/php/conf.d
 
 VOLUME ${APP_HOME}
 
