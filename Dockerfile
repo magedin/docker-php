@@ -200,7 +200,7 @@ RUN docker-php-ext-enable \
 
 ## Install Composer
 RUN curl -sS https://getcomposer.org/installer | \
-  php -- --version=1.10.13 --install-dir=/usr/local/bin --filename=composer
+  php -- --version=1.10.19 --install-dir=/usr/local/bin --filename=composer
 
 
 # BASE CONFIGURATION ---------------------------------------------------------------------------------------------------
