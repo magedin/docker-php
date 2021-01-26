@@ -1,4 +1,4 @@
-FROM php:7.4-fpm-buster
+FROM php:8.0-fpm-buster
 MAINTAINER MagedIn Technology <support@magedin.com>
 
 ARG GOSU_VERSION=1.11
@@ -96,7 +96,6 @@ RUN docker-php-ext-install -j$(nproc) \
   sysvsem \
   sysvshm \
   tidy \
-  xmlrpc \
   xsl \
   zip \
   pcntl \
@@ -104,21 +103,26 @@ RUN docker-php-ext-install -j$(nproc) \
   sodium
 
 ## Install PECL Extensions
-RUN pecl install -o -f \
-  geoip-1.1.1 \
-  gnupg \
+ADD https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions /usr/local/bin/
+
+RUN chmod +x /usr/local/bin/install-php-extensions && sync && \
+  install-php-extensions \
+# RUN pecl install -o -f \
+#  geoip-1.1.1 \
+#  gnupg \
+#  propro \
+#  ssh2-1.2 \
   igbinary \
   imagick \
   mailparse \
   msgpack \
   oauth \
   pcov \
-  propro \
+  uuid \
   raphf \
   redis \
-  xdebug-2.9.8 \
-  ssh2-1.2 \
-  yaml
+  yaml \
+  xdebug-3.0.2
 
 ## Install Blackfire
 RUN curl -A "Docker" -o /tmp/blackfire-probe.tar.gz -D - -L -s https://blackfire.io/api/v1/releases/probe/php/linux/amd64/$(php -r "echo PHP_MAJOR_VERSION.PHP_MINOR_VERSION;") \
@@ -144,14 +148,15 @@ RUN rm -f /usr/local/etc/php/conf.d/*sodium.ini \
   && pecl install -o -f libsodium
 
 ## Install Ioncube
-RUN cd /tmp \
-  && curl -O https://downloads.ioncube.com/loader_downloads/ioncube_loaders_lin_x86-64.tar.gz \
-  && tar zxvf ioncube_loaders_lin_x86-64.tar.gz \
-  && export PHP_VERSION=$(php -r "echo PHP_MAJOR_VERSION.'.'.PHP_MINOR_VERSION;") \
-  && export PHP_EXT_DIR=$(php-config --extension-dir) \
-  && cp "./ioncube/ioncube_loader_lin_${PHP_VERSION}.so" "${PHP_EXT_DIR}/ioncube.so" \
-  && rm -rf ./ioncube \
-  && rm ioncube_loaders_lin_x86-64.tar.gz
+
+#RUN cd /tmp \
+#  && curl -O https://downloads.ioncube.com/loader_downloads/ioncube_loaders_lin_x86-64.tar.gz \
+#  && tar zxvf ioncube_loaders_lin_x86-64.tar.gz \
+#  && export PHP_VERSION=$(php -r "echo PHP_MAJOR_VERSION.'.'.PHP_MINOR_VERSION;") \
+#  && export PHP_EXT_DIR=$(php-config --extension-dir) \
+#  && cp "./ioncube/ioncube_loader_lin_${PHP_VERSION}.so" "${PHP_EXT_DIR}/ioncube.so" \
+#  && rm -rf ./ioncube \
+#  && rm ioncube_loaders_lin_x86-64.tar.gz
 
 ## Install Sendmail for MailHog
 RUN curl -sSLO https://github.com/mailhog/mhsendmail/releases/download/v0.2.0/mhsendmail_linux_amd64 \
@@ -159,48 +164,48 @@ RUN curl -sSLO https://github.com/mailhog/mhsendmail/releases/download/v0.2.0/mh
   && mv mhsendmail_linux_amd64 /usr/local/bin/mhsendmail
 
 ## Enable PHP Extensions
-RUN docker-php-ext-enable \
-  bcmath \
-  blackfire \
-  bz2 \
-  calendar \
-  exif \
-  gd \
-  geoip \
-  gettext \
-  gmp \
-  gnupg \
-  igbinary \
-  imagick \
-  intl \
-  ldap \
-  mailparse \
-  msgpack \
-  mysqli \
-  oauth \
-  opcache \
-  pcov \
-  pdo_mysql \
-  propro \
-  pspell \
-  raphf \
-  redis \
-  shmop \
-  soap \
-  sockets \
-  sodium \
-  sysvmsg \
-  sysvsem \
-  sysvshm \
-  tidy \
-  xdebug \
-  xmlrpc \
-  xsl \
-  yaml \
-  zip \
-  pcntl \
-  ssh2 \
-  ioncube
+# warning: [extension] (extension) is already loaded!
+#RUN docker-php-ext-enable \
+#   geoip \ # is not installed
+#   gnupg \ # is not installed
+#   propro \ # is not installed
+#   ssh2 \ # is not installed
+#   ioncube # is not installed
+#  bcmath \
+#  blackfire \
+#  bz2 \
+#  calendar \
+#  exif \
+#  gd \
+#  gettext \
+#  gmp \
+#  igbinary \
+#  imagick \
+#  intl \
+#  ldap \
+#  mailparse \
+#  msgpack \
+#  mysqli \
+#  oauth \
+#  opcache \
+#  pcov \
+#  pdo_mysql \
+#  pspell \
+#  raphf \
+#  redis \
+#  shmop \
+#  soap \
+#  sockets \
+#  sodium \
+#  sysvmsg \
+#  sysvsem \
+#  sysvshm \
+#  tidy \
+#  xdebug \
+#  xsl \
+#  yaml \
+#  zip \
+#  pcntl
 
 ## Install Composer
 RUN curl -sS https://getcomposer.org/installer | \
