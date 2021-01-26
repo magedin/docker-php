@@ -28,31 +28,7 @@ RUN apt-get update \
   sendmail-bin \
   sendmail \
   sudo \
-  libbz2-dev \
-  libjpeg62-turbo-dev \
-  libpng-dev \
-  libwebp-dev \
-  libfreetype6-dev \
-  libgeoip-dev \
   wget \
-  libgmp-dev \
-  libgpgme11-dev \
-  libmagickwand-dev \
-  libmagickcore-dev \
-  libicu-dev \
-  libldap2-dev \
-  libpspell-dev \
-  libtidy-dev \
-  libxslt1-dev \
-  libyaml-dev \
-  libzip-dev \
-  zip \
-  gzip \
-  libmcrypt-dev \
-  libonig-dev \
-  libsodium-dev \
-  libssh2-1-dev \
-  default-mysql-client \
   && rm -rf /var/lib/apt/lists/*
 
 ## Install Tools
@@ -62,6 +38,49 @@ RUN apt update && apt install -y \
   vim \
   procps \
   watch
+
+## Install required PHP extensions
+ADD https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions /usr/local/bin/
+RUN chmod +x /usr/local/bin/install-php-extensions && sync && install-php-extensions \
+  bcmath \
+  bz2 \
+  calendar \
+  exif \
+  gd \
+  gettext \
+  gmp \
+  igbinary \
+  imagick \
+  intl \
+  ldap \
+  mailparse \
+  msgpack \
+  mysqli \
+  oauth \
+  opcache \
+  pcntl \
+  pcov \
+  pdo_mysql \
+  pspell \
+  raphf \
+  redis \
+  shmop \
+  soap \
+  sockets \
+  sysvmsg \
+  sysvsem \
+  sysvshm \
+  tidy \
+  uuid \
+  xdebug-2.9.8 \
+  xsl \
+  yaml \
+  zip \
+  # Not available in PHP 8.0
+  gnupg \
+  propro \
+  ssh2 \
+  xmlrpc
 
 ## Configure the gd library
 RUN docker-php-ext-configure \
@@ -74,52 +93,6 @@ RUN docker-php-ext-configure \
 RUN docker-php-ext-configure \
   opcache --enable-opcache
 
-## Install required PHP extensions
-RUN docker-php-ext-install -j$(nproc) \
-  bcmath \
-  bz2 \
-  calendar \
-  exif \
-  gd \
-  gettext \
-  gmp \
-  intl \
-  ldap \
-  mysqli \
-  opcache \
-  pdo_mysql \
-  pspell \
-  shmop \
-  soap \
-  sockets \
-  sysvmsg \
-  sysvsem \
-  sysvshm \
-  tidy \
-  xmlrpc \
-  xsl \
-  zip \
-  pcntl \
-  mbstring \
-  sodium
-
-## Install PECL Extensions
-RUN pecl install -o -f \
-  geoip-1.1.1 \
-  gnupg \
-  igbinary \
-  imagick \
-  mailparse \
-  msgpack \
-  oauth \
-  pcov \
-  propro \
-  raphf \
-  redis \
-  xdebug-2.9.8 \
-  ssh2-1.2 \
-  yaml
-
 ## Install Blackfire
 RUN curl -A "Docker" -o /tmp/blackfire-probe.tar.gz -D - -L -s https://blackfire.io/api/v1/releases/probe/php/linux/amd64/$(php -r "echo PHP_MAJOR_VERSION.PHP_MINOR_VERSION;") \
   && mkdir -p /tmp/blackfire \
@@ -128,20 +101,6 @@ RUN curl -A "Docker" -o /tmp/blackfire-probe.tar.gz -D - -L -s https://blackfire
   && ( echo extension=blackfire.so \
   && echo blackfire.agent_socket=tcp://blackfire:8707 ) > $(php -i | grep "additional .ini" | awk '{print $9}')/blackfire.ini \
   && rm -rf /tmp/blackfire /tmp/blackfire-probe.tar.gz
-
-## Install Sodium
-RUN rm -f /usr/local/etc/php/conf.d/*sodium.ini \
-  && rm -f /usr/local/lib/php/extensions/*/*sodium.so \
-  && apt-get remove libsodium* -y  \
-  && mkdir -p /tmp/libsodium  \
-  && curl -sL https://github.com/jedisct1/libsodium/archive/1.0.18-RELEASE.tar.gz | tar xzf - -C  /tmp/libsodium \
-  && cd /tmp/libsodium/libsodium-1.0.18-RELEASE/ \
-  && ./configure \
-  && make && make check \
-  && make install  \
-  && cd / \
-  && rm -rf /tmp/libsodium  \
-  && pecl install -o -f libsodium
 
 ## Install Ioncube
 RUN cd /tmp \
@@ -158,53 +117,8 @@ RUN curl -sSLO https://github.com/mailhog/mhsendmail/releases/download/v0.2.0/mh
   && chmod +x mhsendmail_linux_amd64 \
   && mv mhsendmail_linux_amd64 /usr/local/bin/mhsendmail
 
-## Enable PHP Extensions
-RUN docker-php-ext-enable \
-  bcmath \
-  blackfire \
-  bz2 \
-  calendar \
-  exif \
-  gd \
-  geoip \
-  gettext \
-  gmp \
-  gnupg \
-  igbinary \
-  imagick \
-  intl \
-  ldap \
-  mailparse \
-  msgpack \
-  mysqli \
-  oauth \
-  opcache \
-  pcov \
-  pdo_mysql \
-  propro \
-  pspell \
-  raphf \
-  redis \
-  shmop \
-  soap \
-  sockets \
-  sodium \
-  sysvmsg \
-  sysvsem \
-  sysvshm \
-  tidy \
-  xdebug \
-  xmlrpc \
-  xsl \
-  yaml \
-  zip \
-  pcntl \
-  ssh2 \
-  ioncube
-
 ## Install Composer
-RUN curl -sS https://getcomposer.org/installer | \
-  php -- --version=1.10.19 --install-dir=/usr/local/bin --filename=composer
+RUN install-php-extensions @composer-1
 
 
 # BASE CONFIGURATION ---------------------------------------------------------------------------------------------------
