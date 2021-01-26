@@ -1,4 +1,4 @@
-FROM php:5.6-fpm
+FROM php:5.5-fpm
 MAINTAINER MagedIn Technology <support@magedin.com>
 
 ARG GOSU_VERSION=1.11
