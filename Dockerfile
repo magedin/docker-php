@@ -41,10 +41,7 @@ RUN apt update && apt install -y \
 
 ## Install required PHP extensions
 ADD https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions /usr/local/bin/
-RUN chmod +x /usr/local/bin/install-php-extensions && sync
-
-# Common
-RUN install-php-extensions \
+RUN chmod +x /usr/local/bin/install-php-extensions && sync && install-php-extensions \
   bcmath \
   bz2 \
   calendar \
@@ -77,14 +74,9 @@ RUN install-php-extensions \
   uuid \
   xsl \
   yaml \
-  zip
-
-# XDebug
-RUN install-php-extensions \
-  xdebug-2.7.2
-
-# Not available in PHP 8.0
-RUN install-php-extensions \
+  zip \
+  xdebug-2.7.2 \
+  # Not available in PHP 8.0
   gnupg \
   propro \
   ssh2 \
