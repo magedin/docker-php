@@ -1,4 +1,4 @@
-FROM php:7.2-fpm-buster
+FROM php:7.0-fpm
 MAINTAINER MagedIn Technology <support@magedin.com>
 
 ARG GOSU_VERSION=1.11
@@ -41,7 +41,10 @@ RUN apt update && apt install -y \
 
 ## Install required PHP extensions
 ADD https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions /usr/local/bin/
-RUN chmod +x /usr/local/bin/install-php-extensions && sync && install-php-extensions \
+RUN chmod +x /usr/local/bin/install-php-extensions && sync
+
+# Common
+RUN install-php-extensions \
   bcmath \
   bz2 \
   calendar \
@@ -72,11 +75,16 @@ RUN chmod +x /usr/local/bin/install-php-extensions && sync && install-php-extens
   sysvshm \
   tidy \
   uuid \
-  xdebug-2.9.8 \
   xsl \
   yaml \
-  zip \
-  # Not available in PHP 8.0
+  zip
+
+# XDebug
+RUN install-php-extensions \
+  xdebug-2.7.2
+
+# Not available in PHP 8.0
+RUN install-php-extensions \
   gnupg \
   propro \
   ssh2 \
