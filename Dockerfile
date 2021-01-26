@@ -1,4 +1,4 @@
-FROM php:7.0-fpm
+FROM php:5.6-fpm
 MAINTAINER MagedIn Technology <support@magedin.com>
 
 ARG GOSU_VERSION=1.11
@@ -59,7 +59,7 @@ RUN chmod +x /usr/local/bin/install-php-extensions && sync && install-php-extens
   oauth \
   opcache \
   pcntl \
-  pcov \
+  # pcov \
   pdo_mysql \
   pspell \
   raphf \
@@ -75,7 +75,7 @@ RUN chmod +x /usr/local/bin/install-php-extensions && sync && install-php-extens
   xsl \
   yaml \
   zip \
-  xdebug-2.7.2 \
+  xdebug \
   # Not available in PHP 8.0
   gnupg \
   propro \
