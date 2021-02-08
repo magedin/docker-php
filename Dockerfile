@@ -72,7 +72,7 @@ RUN chmod +x /usr/local/bin/install-php-extensions && sync && install-php-extens
   sysvshm \
   tidy \
   uuid \
-  xdebug-2.9.8 \
+  xdebug-3.0.2 \
   xsl \
   yaml \
   zip \
