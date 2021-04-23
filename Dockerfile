@@ -20,7 +20,7 @@ ENV LS_OPTIONS "--color=auto"
 
 # BASE INSTALLATION ----------------------------------------------------------------------------------------------------
 
-## Install dependencies
+## Install base dependencies
 RUN apt-get update \
   && apt-get upgrade -y \
   && apt-get install -y --no-install-recommends \
@@ -28,8 +28,7 @@ RUN apt-get update \
   sendmail-bin \
   sendmail \
   sudo \
-  wget \
-  && rm -rf /var/lib/apt/lists/*
+  wget
 
 ## Install Tools
 RUN apt update && apt install -y \
@@ -38,6 +37,19 @@ RUN apt update && apt install -y \
   vim \
   procps \
   watch
+
+## Install PHP dependencies (required to configure the GD library)
+RUN apt update && apt install -y \
+  ## required to configure the GD library
+  libfreetype6-dev \
+  libjpeg62-turbo-dev \
+  libpng-dev \
+  zlib1g-dev \
+  libwebp-dev \
+  ## required to configure the LDAP
+  libldb-dev \
+  libldap2-dev \
+  && rm -rf /var/lib/apt/lists/*
 
 ## Install required PHP extensions
 ADD https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions /usr/local/bin/
@@ -72,7 +84,8 @@ RUN chmod +x /usr/local/bin/install-php-extensions && sync && install-php-extens
   sysvshm \
   tidy \
   uuid \
-  xdebug-3.0.2 \
+  # Install the most recent xdebug 3.x version (for example 3.0.4)
+  xdebug-^3 \
   xsl \
   yaml \
   zip \
@@ -82,7 +95,7 @@ RUN chmod +x /usr/local/bin/install-php-extensions && sync && install-php-extens
   ssh2 \
   xmlrpc
 
-## Configure the gd library
+## Configure the GD library
 RUN docker-php-ext-configure \
   gd --enable-gd=/usr/include/ \
      --with-freetype=/usr/include/ \
@@ -117,8 +130,11 @@ RUN curl -sSLO https://github.com/mailhog/mhsendmail/releases/download/v0.2.0/mh
   && chmod +x mhsendmail_linux_amd64 \
   && mv mhsendmail_linux_amd64 /usr/local/bin/mhsendmail
 
-## Install Composer
-RUN install-php-extensions @composer-1
+## Install Composer (version one and two)
+RUN curl -o /usr/local/bin/composer -O https://getcomposer.org/composer-2.phar && \
+    curl -o /usr/local/bin/composer1 -O https://getcomposer.org/composer-1.phar && \
+    ln -s /usr/local/bin/composer /usr/local/bin/composer2 && \
+    chmod +x /usr/local/bin/composer*
 
 
 # BASE CONFIGURATION ---------------------------------------------------------------------------------------------------
@@ -131,7 +147,7 @@ COPY conf/php.ini /usr/local/etc/php/php.ini
 COPY conf/php-fpm.conf /usr/local/etc/
 
 ## Disable XDebug by default
-RUN sed -i -e 's/^zend_extension/\;zend_extension/g' /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
+# RUN sed -i -e 's/^zend_extension/\;zend_extension/g' /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
 
 COPY fpm-healthcheck.sh /usr/local/bin/fpm-healthcheck.sh
 RUN ["chmod", "+x", "/usr/local/bin/fpm-healthcheck.sh"]
