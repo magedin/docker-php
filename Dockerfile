@@ -147,7 +147,7 @@ COPY conf/php.ini /usr/local/etc/php/php.ini
 COPY conf/php-fpm.conf /usr/local/etc/
 
 ## Disable XDebug by default
-# RUN sed -i -e 's/^zend_extension/\;zend_extension/g' /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
+RUN sed -i -e 's/^zend_extension/\;zend_extension/g' /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
 
 COPY fpm-healthcheck.sh /usr/local/bin/fpm-healthcheck.sh
 RUN ["chmod", "+x", "/usr/local/bin/fpm-healthcheck.sh"]
