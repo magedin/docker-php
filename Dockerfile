@@ -29,6 +29,7 @@ RUN apt-get update \
   sendmail \
   sudo \
   wget \
+  unzip \
   && rm -rf /var/lib/apt/lists/*
 
 ## Install Tools
