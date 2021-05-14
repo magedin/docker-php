@@ -1,4 +1,4 @@
-FROM php:7.4-fpm-buster
+FROM php:7.4-apache-buster
 MAINTAINER MagedIn Technology <support@magedin.com>
 
 ARG GOSU_VERSION=1.11
@@ -28,7 +28,8 @@ RUN apt-get update \
   sendmail-bin \
   sendmail \
   sudo \
-  wget
+  wget \
+  unzip
 
 ## Install Tools
 RUN apt update && apt install -y \
@@ -149,13 +150,13 @@ COPY conf/php-fpm.conf /usr/local/etc/
 ## Disable XDebug by default
 RUN sed -i -e 's/^zend_extension/\;zend_extension/g' /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
 
-COPY fpm-healthcheck.sh /usr/local/bin/fpm-healthcheck.sh
-RUN ["chmod", "+x", "/usr/local/bin/fpm-healthcheck.sh"]
+#COPY fpm-healthcheck.sh /usr/local/bin/fpm-healthcheck.sh
+#RUN ["chmod", "+x", "/usr/local/bin/fpm-healthcheck.sh"]
 
-HEALTHCHECK --retries=3 CMD ["bash", "/usr/local/bin/fpm-healthcheck.sh"]
+#HEALTHCHECK --retries=3 CMD ["bash", "/usr/local/bin/fpm-healthcheck.sh"]
 
-COPY docker-entrypoint.sh /docker-entrypoint.sh
-RUN ["chmod", "+x", "/docker-entrypoint.sh"]
+# COPY docker-entrypoint.sh /docker-entrypoint.sh
+# RUN ["chmod", "+x", "/docker-entrypoint.sh"]
 
 RUN touch ${APP_HOME}/.bashrc \
   && echo "alias ll=\"ls $LS_OPTIONS -lah\"" >> ${APP_HOME}/.bashrc \
@@ -166,12 +167,12 @@ RUN mkdir -p ${APP_ROOT} \
 
 VOLUME ${APP_HOME}
 
-ENTRYPOINT ["/docker-entrypoint.sh"]
+# ENTRYPOINT ["/docker-entrypoint.sh"]
 
 USER root
 
 WORKDIR ${APP_ROOT}
 
-CMD ["php-fpm", "-R"]
+# CMD ["php-fpm", "-R"]
 
 #-----------------------------------------------------------------------------------------------------------------------
