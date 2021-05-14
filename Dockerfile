@@ -28,7 +28,8 @@ RUN apt-get update \
   sendmail-bin \
   sendmail \
   sudo \
-  wget
+  wget \
+  unzip
 
 ## Install Tools
 RUN apt update && apt install -y \
