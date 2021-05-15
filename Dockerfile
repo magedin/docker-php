@@ -1,4 +1,4 @@
-FROM php:7.4-fpm-buster
+FROM php:8.0-fpm-buster
 MAINTAINER MagedIn Technology <support@magedin.com>
 
 ARG GOSU_VERSION=1.11
@@ -90,9 +90,8 @@ RUN chmod +x /usr/local/bin/install-php-extensions && sync && install-php-extens
   xsl \
   yaml \
   zip \
-  # Not available in PHP 8.0
   gnupg \
-  propro \
+  # propro \
   ssh2 \
   xmlrpc
 
@@ -115,16 +114,6 @@ RUN curl -A "Docker" -o /tmp/blackfire-probe.tar.gz -D - -L -s https://blackfire
   && ( echo extension=blackfire.so \
   && echo blackfire.agent_socket=tcp://blackfire:8707 ) > $(php -i | grep "additional .ini" | awk '{print $9}')/blackfire.ini \
   && rm -rf /tmp/blackfire /tmp/blackfire-probe.tar.gz
-
-## Install Ioncube
-RUN cd /tmp \
-  && curl -O https://downloads.ioncube.com/loader_downloads/ioncube_loaders_lin_x86-64.tar.gz \
-  && tar zxvf ioncube_loaders_lin_x86-64.tar.gz \
-  && export PHP_VERSION=$(php -r "echo PHP_MAJOR_VERSION.'.'.PHP_MINOR_VERSION;") \
-  && export PHP_EXT_DIR=$(php-config --extension-dir) \
-  && cp "./ioncube/ioncube_loader_lin_${PHP_VERSION}.so" "${PHP_EXT_DIR}/ioncube.so" \
-  && rm -rf ./ioncube \
-  && rm ioncube_loaders_lin_x86-64.tar.gz
 
 ## Install Sendmail for MailHog
 RUN curl -sSLO https://github.com/mailhog/mhsendmail/releases/download/v0.2.0/mhsendmail_linux_amd64 \
@@ -150,13 +139,13 @@ COPY conf/php-fpm.conf /usr/local/etc/
 ## Disable XDebug by default
 RUN sed -i -e 's/^zend_extension/\;zend_extension/g' /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
 
-#COPY fpm-healthcheck.sh /usr/local/bin/fpm-healthcheck.sh
-#RUN ["chmod", "+x", "/usr/local/bin/fpm-healthcheck.sh"]
+COPY fpm-healthcheck.sh /usr/local/bin/fpm-healthcheck.sh
+RUN ["chmod", "+x", "/usr/local/bin/fpm-healthcheck.sh"]
 
-#HEALTHCHECK --retries=3 CMD ["bash", "/usr/local/bin/fpm-healthcheck.sh"]
+HEALTHCHECK --retries=3 CMD ["bash", "/usr/local/bin/fpm-healthcheck.sh"]
 
-# COPY docker-entrypoint.sh /docker-entrypoint.sh
-# RUN ["chmod", "+x", "/docker-entrypoint.sh"]
+COPY docker-entrypoint.sh /docker-entrypoint.sh
+RUN ["chmod", "+x", "/docker-entrypoint.sh"]
 
 RUN touch ${APP_HOME}/.bashrc \
   && echo "alias ll=\"ls $LS_OPTIONS -lah\"" >> ${APP_HOME}/.bashrc \
@@ -167,12 +156,12 @@ RUN mkdir -p ${APP_ROOT} \
 
 VOLUME ${APP_HOME}
 
-# ENTRYPOINT ["/docker-entrypoint.sh"]
+ENTRYPOINT ["/docker-entrypoint.sh"]
 
 USER root
 
 WORKDIR ${APP_ROOT}
 
-# CMD ["php-fpm", "-R"]
+CMD ["php-fpm", "-R"]
 
 #-----------------------------------------------------------------------------------------------------------------------
