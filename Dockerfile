@@ -1,4 +1,4 @@
-FROM php:7.3.17-fpm-buster
+FROM php:7.3.16-fpm-buster
 MAINTAINER MagedIn Technology <support@magedin.com>
 
 ARG GOSU_VERSION=1.11
