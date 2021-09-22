@@ -1,5 +1,4 @@
-FROM php:7.4.22-fpm-buster
-MAINTAINER MagedIn Technology <support@magedin.com>
+FROM php:7.4.23-fpm-buster
 
 ARG GOSU_VERSION=1.11
 
@@ -29,18 +28,20 @@ RUN apt-get update \
   sendmail \
   sudo \
   wget \
-  unzip
+  unzip \
+  && rm -rf /var/lib/apt/lists/*
 
 ## Install Tools
-RUN apt update && apt install -y \
+RUN apt update && apt install -y --no-install-recommends \
   git \
   lsof \
   vim \
   procps \
-  watch
+  watch \
+  && rm -rf /var/lib/apt/lists/*
 
 ## Install PHP dependencies (required to configure the GD library)
-RUN apt update && apt install -y \
+RUN apt update && apt install -y --no-install-recommends \
   ## required to configure the GD library
   libfreetype6-dev \
   libjpeg62-turbo-dev \
