@@ -1,4 +1,4 @@
-FROM php:8.0.9-fpm-buster
+FROM php:8.0.10-fpm-buster
 MAINTAINER MagedIn Technology <support@magedin.com>
 
 ARG GOSU_VERSION=1.11
@@ -29,18 +29,20 @@ RUN apt-get update \
   sendmail \
   sudo \
   wget \
-  unzip
+  unzip \
+  && rm -rf /var/lib/apt/lists/*
 
 ## Install Tools
-RUN apt update && apt install -y \
+RUN apt update && apt install -y --no-install-recommends \
   git \
   lsof \
   vim \
   procps \
-  watch
+  watch \
+  && rm -rf /var/lib/apt/lists/*
 
 ## Install PHP dependencies (required to configure the GD library)
-RUN apt update && apt install -y \
+RUN apt update && apt install -y --no-install-recommends \
   ## required to configure the GD library
   libfreetype6-dev \
   libjpeg62-turbo-dev \
@@ -86,7 +88,7 @@ RUN chmod +x /usr/local/bin/install-php-extensions && sync && install-php-extens
   tidy \
   uuid \
   # Install the most recent xdebug 3.x version (for example 3.0.4)
-  xdebug-^3 \
+  xdebug-^3.0 \
   xsl \
   yaml \
   zip \
