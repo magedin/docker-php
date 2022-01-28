@@ -1,4 +1,4 @@
-FROM tiagosampaio/php:7.4.26.1
+FROM tiagosampaio/php:7.4.27.1
 
 ARG GOSU_VERSION=1.11
 
@@ -62,6 +62,9 @@ RUN ["chmod", "+x", "/docker-entrypoint.sh"]
 RUN touch ${APP_HOME}/.bashrc \
   && echo "alias ll=\"ls $LS_OPTIONS -lah\"" >> ${APP_HOME}/.bashrc \
   && echo "alias l=\"ll\"" >> ${APP_HOME}/.bashrc
+
+RUN mkdir -p ${APP_HOME}/scripts
+COPY ./scripts/* ${APP_HOME}/scripts
 
 RUN mkdir -p ${APP_ROOT} \
   && chown -R ${APP_USER}:${APP_GROUP} ${APP_HOME} /usr/local/etc/php/conf.d
